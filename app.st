@@ -76,7 +76,7 @@ Object subclass: Cksum [
         ^ sum
     ]
 
-    func: args [
+    checksum: args [
         | i | 
         i := 1 .
         [(args size) >= i] whileTrue: [
@@ -88,13 +88,16 @@ Object subclass: Cksum [
             ifTrue: [self handler: path ]; 
 
             ifFalse: [
-                file := FileStream open: path mode: FileStream read .
-                Transcript
-                    show: (self eval: file) asString;
-                    show: ' ';
-                    show: (file size) asString;
-                    show: ' ';
-                    show: path; cr.
+                ((File name: path) isFile)
+                ifTrue: [
+                    file := FileStream open: path mode: FileStream read .
+                    Transcript
+                        show: (self eval: file) asString;
+                        show: ' ';
+                        show: (file size) asString;
+                        show: ' ';
+                        show: path; cr .
+                ] .
             ] .
 
             i := i + 1
@@ -125,11 +128,6 @@ Object subclass: Cksum [
                     show: 'GNU coreutils online help: <https://www.gnu.org/software/coreutils/>'; cr ; 
                     show: 'Full documentation at: <https://www.gnu.org/software/coreutils/cksum>'; cr ; 
                     show: 'or available locally via: info ''(coreutils) cksum invocation'''; cr .
-            ];
-            ifFalse: [
-                Transcript 
-                    show: 'cksum: unrecognized option ''', tag, ''''; cr ;
-                    show: 'Try ''cksum --help'' for more information.'; cr . 
             ]
         ] . 
         ObjectMemory quit 
@@ -138,5 +136,6 @@ Object subclass: Cksum [
 ]
 
 
+ObjectMemory gcMessage: false .
 x := Cksum new .
-x func: (Smalltalk arguments)
+x checksum: (Smalltalk arguments)
