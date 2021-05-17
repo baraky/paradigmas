@@ -64,18 +64,8 @@ crctab = [
   0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
   ]
 
--- scanner _ [] _ = S.putStr ""
--- scanner n (x:xs) len = do
---     if C.isPrefixOf "--" x
---         then do
---             if and (len == 1) (or (x == "--version") (x == "--help"))
---                 then S.putStr ""
---                 else S.putStrLn $ "cksum: unrecognized option '" ++ x ++ "' \nTry 'cksum --help' for more information."
---         else scanner n xs len
-
 main = do
     args <- getArgs
---    scanner "--" args (C.length args)
     mapM checksum args
 
 checksum "--help" = do
@@ -107,7 +97,7 @@ checksum path = do
             size <- hFileSize handle
             S.putStrLn $ show (cksum bytes 0 0) ++ " " ++ show size ++ " " ++ path
         else
-            S.putStrLn $ "cksum: " ++ path  ++ ": No such file or directory"
+            S.putStr $ ""
 
 cksum :: ByteString -> Word32 -> Integer -> Word32
 cksum xs n i = if xs == BS.empty
